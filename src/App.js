@@ -1,35 +1,68 @@
 import React, { useState } from 'react';
-import './App.css'
+import './App.css';
+import { Bar } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const App = () => {
-  const [algorithm, setAlgorithm] = useState('');
-  const [code, setCode] = useState(''); 
+  const [code, setCode] = useState('');
   const [result, setResult] = useState('');
+  const [complexityData, setComplexityData] = useState(null);
 
   const analyzeComplexity = async () => {
     try {
-      const response = await fetch('http://localhost:5001/analyze', { 
+      const response = await fetch('http://localhost:5004/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ algorithm, code }), 
+        body: JSON.stringify({ code }),
       });
       const data = await response.json();
       setResult(data);
+
+      if (data.algorithm) {
+        setComplexityData({
+          labels: ['Time Complexity', 'Space Complexity'],
+          datasets: [
+            {
+              label: data.algorithm,
+              data: [
+                parseComplexity(data.timeComplexity),
+                parseComplexity(data.spaceComplexity),
+              ],
+              backgroundColor: ['#6e8897', '#9fb1bd'],
+            },
+          ],
+        });
+      }
     } catch (error) {
       setResult({ error: 'Failed to connect to the server. Please check the backend.' });
     }
+  };
+
+  const parseComplexity = (complexity) => {
+    const scale = {
+      'O(1)': 1,
+      'O(log n)': 2,
+      'O(n)': 3,
+      'O(n log n)': 4,
+      'O(n^2)': 5,
+    };
+    return scale[complexity] || 0;
   };
 
   return (
     <div className="outer-con">
       <p className="title">Time and Space Complexity Analyzer</p>
       <p className='name'>By Jarell Tamonte</p>
-      <select onChange={(e) => setAlgorithm(e.target.value)} className='select-menu'>
-        <option value="">Select Algorithm</option>
-        <option value="Binary Search">Binary Search</option>
-        <option value="Merge Sort">Merge Sort</option>
-        <option value="Quick Sort">Quick Sort</option>
-      </select>
       <textarea
         placeholder="Paste your code here..."
         value={code}
@@ -39,9 +72,10 @@ const App = () => {
         className="text-area"
       ></textarea>
       <button onClick={analyzeComplexity} className="analyze-btn">Analyze</button>
+
       {result && (
-        <div className='result-area'>
-          <h2>Results:</h2>
+        <div className="result-area">
+          <p className="results">Results:</p>
           {result.error ? (
             <p style={{ color: 'red' }}>{result.error}</p>
           ) : (
@@ -49,9 +83,41 @@ const App = () => {
               <p><strong>Detected Language:</strong> {result.language}</p>
               <p><strong>Time Complexity:</strong> {result.timeComplexity}</p>
               <p><strong>Space Complexity:</strong> {result.spaceComplexity}</p>
+              <p><strong>Detected Algorithm:</strong> {result.algorithm}</p>
               <p><strong>Note:</strong> {result.note}</p>
             </>
           )}
+        </div>
+      )}
+
+      {complexityData && (
+        <div className="chart-container">
+          <p className="performance-title">Performance Visualizer</p>
+          <Bar
+            data={complexityData}
+            options={{
+              responsive: true,
+              plugins: {
+                legend: {
+                  labels: {
+                    generateLabels: (chart) => {
+                      const labels = ChartJS.defaults.plugins.legend.labels.generateLabels(chart);
+                      return labels.map(label => ({
+                        ...label,
+                        fillStyle: 'transparent',
+                        strokeStyle: 'transparent',
+                      }));
+                    },
+                  },
+                },
+              },
+              scales: {
+                y: { title: { display: true, text: 'Performance Scale' } },
+              },
+            }}
+          />
+          <p className="comment">The <strong>smaller</strong> the scale value, the <strong>faster</strong> the performance!</p>
+          <p className="comment">Note: It defaults to 0 if the complexity is not found.</p>
         </div>
       )}
     </div>

@@ -1,5 +1,9 @@
+html{
+  background-color: #2e5366;
+}
+
 .outer-con{
-  margin: 4% 4% 4% 4%;
+  margin: 4%;
   height: fit-content;
   display: flex;
   justify-content: center;
@@ -9,31 +13,59 @@
   border-style: solid;
   border-radius: 12px;
   padding-bottom: 4%;
-  box-shadow: 5px 5px #888888;
+  box-shadow: 5px 5px #000000;;
+  background-color: #d3d0cb;
+  border: none;
 }
 
 .title{
   font-family: "Oswald", sans-serif;
-  font-size: 32px;
+  font-size: 42px;
   margin-bottom: 0;
+  color: #ffffff;
+  font-weight: bold;
+  background: #2e5366;
+  padding: 1% 2%;
+  border-radius: 12px;
+  user-select: none;
+  box-shadow: 4px 4px #000000;
 }
 
 .name{
   margin-bottom: 4%;
+  color: #000000;
+  font-weight: bold;
+  user-select: none;
 }
 
-.analyze-btn{
+.analyze-btn {
   border: none;
-  color: black;
+  background-color: #2e5366;
+  color: #ffffff;
+  font-weight: 700;
   font-size: 14px;
-  padding: 2%;
+  padding: 1.5% 8%;
   width: fit-content;
-  margin-top: 2%;
-  border-radius: 16px;
+  margin-top: 1.6%;
+  border-radius: 24px;
+  cursor: pointer; 
+  transition: all 0.3s ease; 
 }
 
-.select-menu{
-  
+.analyze-btn:hover {
+  background-color: #3a6a82; 
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+.results{
+  color: #000000;
+  font-family: "Oswald", sans-serif;
+  font-size: 32px;
+  margin-bottom: 0;
+  font-weight: bold;
+  user-select: none;
 }
 
 .result-area{
@@ -42,12 +74,46 @@
 }
 
 .text-area{
-  width: 80%;
+  width: 90%;
   border-radius: 12px;
+  height: 40vh;
+}
+
+.chart-container{
+  width: 90%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+}
+
+.performance-title{
+  font-family: "Oswald", sans-serif;
+  font-size: 32px;
+  margin-bottom: 2%;
+  font-weight: bold;
+}
+
+.comment{
+  font-style: italic;
+  text-align: center;
+  font-size: 14px;
+  user-select: none;
 }
 
 @media (max-width: 460px){
   .title{
-    font-size: 24px;
+    font-size: 22px;
+  }
+
+  .performance-title{
+    font-size: 20px;
+  }
+
+  .name{
+    margin-bottom: 7%;
+  }
+
+  .results{
+    font-size: 20px;
   }
 }

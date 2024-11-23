@@ -12,10 +12,10 @@ app.use(cors());
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
   console.log('Request Body:', req.body); // Log request body
-  next(); // Pass to the next middleware/route handler
+  next();
 });
 
-// Complexity data for each algorithm
+// Complexity data for common algorithms
 const complexityData = {
   'Binary Search': { time: 'O(log n)', space: 'O(1)' },
   'Merge Sort': { time: 'O(n log n)', space: 'O(n)' },
@@ -28,21 +28,23 @@ function detectLanguage(code) {
   if (code.includes('public static void main')) return 'Java';
   if (code.includes('def ') || code.includes('import ')) return 'Python';
   if (code.includes('def ') || code.includes('puts')) return 'Ruby';
-  if (code.includes('document.getElementById') || code.includes('int main()')) return 'JavaScript';
+  if (code.includes('document.getElementById') || code.includes('function')) return 'JavaScript';
   if (code.includes('<stdio.h>') || code.includes('int main()')) return 'C';
   return null;
 }
 
+// Function to infer the algorithm
+function detectAlgorithm(code) {
+  if (code.includes('binarySearch') || (code.includes('low') && code.includes('high'))) return 'Binary Search';
+  if (code.includes('merge') || code.includes('sort') && code.includes('mid')) return 'Merge Sort';
+  if (code.includes('quickSort') || (code.includes('pivot') && code.includes('partition'))) return 'Quick Sort';
+  return 'Unknown Algorithm';
+}
+
 // Route: Analyze complexity
 app.post('/analyze', (req, res) => {
-  console.log('POST /analyze called'); // Log when this route is hit
-  const { algorithm, code } = req.body;
-
-  // Validate algorithm
-  if (!algorithm || !complexityData[algorithm]) {
-    console.error('Error: Invalid or unsupported algorithm selected.');
-    return res.status(400).json({ error: 'Invalid or unsupported algorithm selected.' });
-  }
+  console.log('POST /analyze called');
+  const { code } = req.body;
 
   // Validate code
   if (!code) {
@@ -57,26 +59,26 @@ app.post('/analyze', (req, res) => {
     return res.status(400).json({ error: 'Unsupported or invalid code.' });
   }
 
-  // Fetch complexity data
-  const { time, space } = complexityData[algorithm];
+  // Detect algorithm
+  const algorithm = detectAlgorithm(code);
+  const { time, space } = complexityData[algorithm] || { time: 'Unknown', space: 'Unknown' };
 
   const languageNotes = {
     'C++': 'C++ is optimized with STL for common algorithms.',
     Java: 'Java provides efficient libraries like Collections Framework.',
     Python: 'Python relies on Timsort for sorting and has high-level simplicity.',
     Ruby: 'Ruby’s sort methods are based on Quicksort.',
-    JavaScript: 'JavaScript optimized for web performance',
-    C: 'C is not optimized'
+    JavaScript: 'JavaScript is optimized for web performance.',
+    C: 'C is a low-level language allowing fine-grained control.',
   };
-  
 
   // Send response
   res.json({
-    algorithm,
+    algorithm: algorithm !== 'Unknown Algorithm' ? algorithm : null,
     language,
     timeComplexity: time,
     spaceComplexity: space,
-    note: languageNotes[language],
+    note: languageNotes[language] || 'No specific notes available for this language.',
   });
 });
 
@@ -87,5 +89,5 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-const PORT = 5001; // Use an alternate port
+const PORT = 5004; // Use an alternate port
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
