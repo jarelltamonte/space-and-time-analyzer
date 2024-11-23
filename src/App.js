@@ -75,7 +75,7 @@ const App = () => {
 
       {result && (
         <div className="result-area">
-          <p className="results">Results:</p>
+          <p className="results">Results</p>
           {result.error ? (
             <p style={{ color: 'red' }}>{result.error}</p>
           ) : (
@@ -112,12 +112,29 @@ const App = () => {
                 },
               },
               scales: {
-                y: { title: { display: true, text: 'Performance Scale' } },
+                y: { 
+                  title: { display: true, text: 'Performance Scale' },
+                  ticks: {
+                    callback: function (value) {
+                      const reverseScale = {
+                        1: 'O(1)',
+                        2: 'O(log n)',
+                        3: 'O(n)',
+                        4: 'O(n log n)',
+                        5: 'O(n^2)',
+                      };
+                      return reverseScale[value] || value;
+                    },
+                    stepSize: 1,
+                  },
+                  beginAtZero: true,
+                  max: 5, 
+                },
               },
             }}
           />
           <p className="comment">The <strong>smaller</strong> the scale value, the <strong>faster</strong> the performance!</p>
-          <p className="comment">Note: The scale value defaults to 0 if the complexity is not found.</p>
+          <p className="comment">Note: The scale value defaults to 0 if the complexity is unidentified.</p>
         </div>
       )}
     </div>
