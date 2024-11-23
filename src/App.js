@@ -92,7 +92,7 @@ const App = () => {
 
       {complexityData && (
         <div className="chart-container">
-          <p className="performance-title">Performance Visualizer</p>
+          <p className="performance-title">Complexity Visualizer</p>
           <Bar
             data={complexityData}
             options={{
@@ -117,7 +117,7 @@ const App = () => {
             }}
           />
           <p className="comment">The <strong>smaller</strong> the scale value, the <strong>faster</strong> the performance!</p>
-          <p className="comment">Note: It defaults to 0 if the complexity is not found.</p>
+          <p className="comment">Note: The scale value defaults to 0 if the complexity is not found.</p>
         </div>
       )}
     </div>

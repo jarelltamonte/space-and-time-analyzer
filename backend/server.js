@@ -33,11 +33,46 @@ function detectLanguage(code) {
   return null;
 }
 
-// Function to infer the algorithm
+// Refined function to infer the algorithm
 function detectAlgorithm(code) {
-  if (code.includes('binarySearch') || (code.includes('low') && code.includes('high'))) return 'Binary Search';
-  if (code.includes('merge') || code.includes('sort') && code.includes('mid')) return 'Merge Sort';
-  if (code.includes('quickSort') || (code.includes('pivot') && code.includes('partition'))) return 'Quick Sort';
+  // Binary Search: Detect specific logic (mid, low, high, and a search loop)
+  if (
+    code.includes('binarySearch') || 
+    (
+      code.includes('low') && 
+      code.includes('high') && 
+      code.includes('mid') &&
+      (code.includes('while') || code.includes('if (low <= high)'))
+    )
+  ) {
+    return 'Binary Search';
+  }
+
+  // Quick Sort: Detect partitioning and recursive structure
+  if (
+    code.includes('quickSort') ||
+    (
+      code.includes('pivot') && 
+      code.includes('partition') &&
+      (code.includes('quickSort(') || code.includes('return quickSort'))
+    )
+  ) {
+    return 'Quick Sort';
+  }
+
+  // Merge Sort: Detect divide and conquer logic with merging
+  if (
+    code.includes('merge') || 
+    (
+      code.includes('sort') && 
+      code.includes('mid') &&
+      code.includes('merge(')
+    )
+  ) {
+    return 'Merge Sort';
+  }
+
+  // If no algorithm matches, return unknown
   return 'Unknown Algorithm';
 }
 
