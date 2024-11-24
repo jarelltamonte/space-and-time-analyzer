@@ -20,12 +20,12 @@ const complexityData = {
 };
 
 function detectLanguage(code) {
-  if (code.includes('<iostream>') || code.includes('int main()')) return 'C++';
+  if (code.includes('<iostream>')) return 'C++';
   if (code.includes('public static void main')) return 'Java';
   if (code.includes('def ') || code.includes('import ')) return 'Python';
   if (code.includes('def ') || code.includes('puts')) return 'Ruby';
   if (code.includes('document.getElementById') || code.includes('function')) return 'JavaScript';
-  if (code.includes('<stdio.h>') || code.includes('int main()')) return 'C';
+  if (code.includes('<stdio.h>')) return 'C';
   return null;
 }
 
